@@ -1,5 +1,5 @@
 
-IFC to Graph + Neo4j Integration
+#IFC to Graph + Neo4j Integration
 This script demonstrates how to:
 
 Load an IFC model using ifcopenshell.
