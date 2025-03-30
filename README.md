@@ -31,27 +31,29 @@ Install with pip install neo4j.
 
 A file named var.py containing your Neo4j username/password:
 
+```
 python
 Kopieren
 Bearbeiten
 user_name = "neo4j"
 password = "your_db_password"
 Adjust these accordingly.
+```
 
 How It Works
 Load IFC file:
 The script opens an IFC file (in this example data/ifc/test1.ifc) using ifcopenshell.open(file_path).
 
 Build a Graph:
-
+```
 Graph.create(root) traverses the IFC’s spatial hierarchy and creates a node (Node) for each IFC element.
 
 Each node contains guid, geom_info (including bounding boxes), and IFC attributes.
-
+```
 Construct BVH:
-
+```
 graph.build_bvh() builds a bounding volume hierarchy for all elements. This accelerates spatial queries (e.g., finding overlapping bounding boxes).
-
+```
 Near Relationship:
 
 For each node with a bounding box, the script queries the BVH to find other nodes that potentially intersect in space.
@@ -66,11 +68,12 @@ push_graph_to_neo4j(driver, graph.node_dict) iterates through each node, inserti
 
 How to Run
 Install dependencies:
-
+```
 bash
 Kopieren
 Bearbeiten
-pip install ifcopenshell neo4j
+pip install requirements.txt
+```
 Set up Neo4j:
 
 Install Neo4j (see neo4j.com/download).
