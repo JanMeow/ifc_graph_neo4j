@@ -1,0 +1,5 @@
+# ignore virtual environment files
+venv/
+
+# ignore variable files
+var.py
