@@ -34,10 +34,10 @@ def main():
     # By default, the neo4j runs locally on "bolt://localhost:7687"
     # User name by default is "neo4j" if you run locally
     # ====================================================================
-    # driver = create_driver(username=var.user_name, 
-    #                        password=var.password,
-    #                        server_uri="bolt://localhost:7687")
-    # push_graph_to_neo4j(driver, graph.node_dict)
+    driver = create_driver(username=var.user_name, 
+                           password=var.password,
+                           server_uri="bolt://localhost:7687")
+    push_graph_to_neo4j(driver, graph.node_dict)
     
 
     # OPTIONAL: 
