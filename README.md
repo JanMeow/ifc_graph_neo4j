@@ -1,129 +1,137 @@
-
 # IFC to Graph + Neo4j Integration
 This script demonstrates how to:
 
-Load an IFC model using ifcopenshell.
+**Load an IFC model** using ifcopenshell.
 
-Build a graph of IFC elements and their bounding volumes.
+**Build a graph of IFC elements** and their bounding volumes.
 
-Compute a BVH (Bounding Volume Hierarchy) for efficient spatial queries.
+**Compute a BVH (Bounding Volume Hierarchy)** for efficient spatial queries.
 
-Identify “near” elements based on overlapping bounding volumes.
+**Identify “near” elements** based on overlapping bounding volumes.
 
-Push the resulting graph (nodes and relationships) into a Neo4j database.
+**Push the resulting graph (nodes and relationships) into a Neo4j database.**
 
 Prerequisites
 Python 3.7+ (or a recent version).
 
-ifcopenshell to read and parse IFC files.
-
-Install with pip install ifcopenshell (or see IfcOpenShell docs).
-
-Neo4j (installed locally or accessible remotely).
-
-The script assumes a running Neo4j instance at bolt://localhost:7687.
-
-Alternatively, modify the URI if using a remote server or different port.
-
-Neo4j Python driver for connecting to Neo4j.
-
-Install with pip install neo4j.
-
-A file named var.py containing your Neo4j username/password:
-
-```
-python
-Kopieren
-Bearbeiten
-user_name = "neo4j"
-password = "your_db_password"
-Adjust these accordingly.
-```
-
-How It Works
-Load IFC file:
-The script opens an IFC file (in this example data/ifc/test1.ifc) using ifcopenshell.open(file_path).
-
-Build a Graph:
-```
-Graph.create(root) traverses the IFC’s spatial hierarchy and creates a node (Node) for each IFC element.
-
-Each node contains guid, geom_info (including bounding boxes), and IFC attributes.
-```
-Construct BVH:
-```
-graph.build_bvh() builds a bounding volume hierarchy for all elements. This accelerates spatial queries (e.g., finding overlapping bounding boxes).
-```
-Near Relationship:
-
-For each node with a bounding box, the script queries the BVH to find other nodes that potentially intersect in space.
-
-The script assigns a list of “near” node references: node.near = [...].
-
-Push to Neo4j:
-
-A Neo4j driver is created with create_driver(), connecting to a user-specified server URI and credentials from var.py.
-
-push_graph_to_neo4j(driver, graph.node_dict) iterates through each node, inserting them (with their properties) into Neo4j, and creating “NEAR” relationships between nodes that are spatially close.
-
-How to Run
-Install dependencies:
+2. Install ifcopenshell – for reading/parsing IFC files.
+Install via:
 ```
 bash
 Kopieren
 Bearbeiten
-pip install requirements.txt
+pip install ifcopenshell
 ```
-Set up Neo4j:
+3.**Neo4j** – installed locally or accessible remotely.
 
-Install Neo4j (see neo4j.com/download).
+Defaults to _bolt://localhost:7687_
 
-Start the Neo4j server (e.g., on bolt://localhost:7687).
+Download Neo4j here.[Neo4j]([url](https://neo4j.com/download/))
 
-Note your username/password (defaults might be neo4j / neo4j).
+4.Neo4j Python driver – for connecting from Python to Neo4j.
+```
+bash
+Kopieren
+Bearbeiten
+pip install neo4j
+```
+5.A file named var.py containing your Neo4j username and password, for example:
 
-Create var.py:
+python
+Kopieren
+Bearbeiten
+### var.py
+user_name = "neo4j"
+password = "yourpassword"
+How It Works
+Open an IFC file:
+The script loads test1.ifc (default path: data/ifc/test1.ifc) with:
+```
+python
+Kopieren
+Bearbeiten
+model = ifcopenshell.open(file_path)
+```
+### Create a Graph:
 
+Graph.create(root) traverses the IFC structure, instantiating a Node object for each element.
+
+Each node includes data such as guid, geom_info (bounding boxes, transforms), and property sets.
+
+### Build BVH:
+
+graph.build_bvh() constructs a bounding volume hierarchy for all elements, speeding up overlap checks.
+
+### Near Relationships:
+
+For each node, the code uses graph.bvh_query(node.geom_info["bbox"]) to find other bounding boxes that intersect.
+
+Each node’s near list is populated with these neighboring nodes.
+
+### Push to Neo4j:
+
+A driver is created via create_driver(...), connecting to the Neo4j server (default bolt://localhost:7687).
+
+push_graph_to_neo4j(driver, graph.node_dict) inserts each node and relationship into the graph database:
+
+Nodes are labeled (e.g. :IfcElement, or dynamically by node.geom_type).
+
+Overlapping elements become connected via a [:NEAR] relationship.
+
+Usage
+Install dependencies:
+
+bash
+Kopieren
+Bearbeiten
+pip install ifcopenshell neo4j
+Ensure Neo4j is running:
+
+By default, it listens on bolt://localhost:7687.
+
+Username/password may be neo4j / neo4j initially.
+Change them or keep them as needed.
+
+**Edit var.py:
+**
+```
 python
 Kopieren
 Bearbeiten
 # var.py
 user_name = "neo4j"
 password = "mysecretpassword"
-Run the script:
+```
 
+**Run the script (example: main.py):
+**
+```
 bash
 Kopieren
 Bearbeiten
 python main.py
-(assuming your script is named main.py with the main() function).
-
-Check in Neo4j:
-
-Open Neo4j Browser at http://localhost:7474.
-
-Run:
+```
+**Inspect results in Neo4j Browser:
+**
+Open http://localhost:7474
+```
+Query:
 
 cypher
 Kopieren
 Bearbeiten
-MATCH (n) RETURN n LIMIT 25;
-You should see newly inserted IFC elements labeled (depending on your code) such as :IfcElement, plus their relationships.
+MATCH (n) RETURN n LIMIT 25
+or altenraitvely
+MATCH (n) RETURN n
+```
+You should see newly inserted IFC elements and their relationships.
 
-Customizing
-IFC File: Change file_path = "data/ifc/test1.ifc" to your own IFC file path.
+Optionally 
+**RAG with Openai**
+You can also set your openai api key to use the rag that helps generate Cypher queries for the graph DB
+```
+text_query = "Return all the nodes with the name 'HÜLLKÖRPER' and their relationships"
+cypher_query = generate_cypher_query(text_query, api_key = var.openai_api_key, model = "gpt-4o-mini")
+```
+Use the cypher query generated by the ai model instead !!! :)
 
-Neo4j credentials: Adjust var.py for your environment.
-
-BVH logic: Modify how bounding boxes are calculated or how “near” is determined, if needed.
-
-Labels and Properties in Neo4j: You can map element types or psets to separate labels, relationships, or property keys.
-
-Troubleshooting
-No geometry or missing bounding boxes: Ensure geom_info is populated in your IFC processing logic. Some IFC elements may lack geometric representations.
-
-Authentication errors: Check that user_name and password in var.py match your Neo4j credentials.
-
-Cannot open IFC: IfcOpenShell might not support certain IFC versions or partial geometry. Update IfcOpenShell or test with simpler IFCs.
-
-Enjoy exploring your IFC model in Neo4j!
