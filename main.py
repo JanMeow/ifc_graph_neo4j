@@ -1,7 +1,8 @@
 import var
 import ifcopenshell
-from utils import Graph
+from utils import Graph, Node
 from neo4j_db import create_driver, push_graph_to_neo4j
+from rag import generate_cypher_query
 
 
 file_path = "data/ifc/test1.ifc"
@@ -23,6 +24,8 @@ def main():
         if node.geom_info != None:
             node.near = [graph.node_dict[guid] for guid in graph.bvh_query(node.geom_info["bbox"])
                          if guid != node.guid]
+            
+    print(vars(graph.node_dict["2FQHPJ30nEVPcqIUba8A5n"]))
     
     # Push the graph to Neo4j
     # ====================================================================
@@ -31,12 +34,25 @@ def main():
     # By default, the neo4j runs locally on "bolt://localhost:7687"
     # User name by default is "neo4j" if you run locally
     # ====================================================================
-    driver = create_driver(username=var.user_name, 
-                           password=var.password,
-                           server_uri="bolt://localhost:7687")
-    push_graph_to_neo4j(driver, graph.node_dict)
-    return
+    # driver = create_driver(username=var.user_name, 
+    #                        password=var.password,
+    #                        server_uri="bolt://localhost:7687")
+    # push_graph_to_neo4j(driver, graph.node_dict)
+    
 
+    # OPTIONAL: 
+    # Generate Cypher Query using LLM
+    # ==================================
+    # In case you are not familiar with cypher query
+    # Ask the llm model to generate a cypher query for you !
+    # ====================================================================
+    text_query = "Return all the nodes with the name 'HÜLLKÖRPER' and their relationships"
+    cypher_query = generate_cypher_query(text_query, api_key = var.openai_api_key, model = "gpt-4o-mini")
+    print(cypher_query)
+
+    # Run the query in the Neo4j Browser
+    # Below are some examples:
+    # ====================================================================
     # Open the Neo4j Browser at the uri here it is bolt://localhost:7687
     # Type MATCH (n) RETURN n LIMIT 25; to see your newly inserted nodes.
     # You can also do MATCH (a)-[r:NEAR]->(b) RETURN a,b; to visualize adjacency.

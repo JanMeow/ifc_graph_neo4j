@@ -2,4 +2,4 @@
 venv/
 
 # ignore variable files
-var.py
+var.py"__pycache__/" 
