@@ -1,15 +1,15 @@
 # IFC to Graph + Neo4j Integration
 This script demonstrates how to:
 
-**Load an IFC model** using ifcopenshell.
+1.**Load an IFC model** using ifcopenshell.
 
-**Build a graph of IFC elements** and their bounding volumes.
+2.**Build a graph of IFC elements** and their bounding volumes.
 
-**Compute a BVH (Bounding Volume Hierarchy)** for efficient spatial queries.
+3.**Compute a BVH (Bounding Volume Hierarchy)** for efficient spatial queries.
 
-**Identify “near” elements** based on overlapping bounding volumes.
+4.**Identify “near” elements** based on overlapping bounding volumes.
 
-**Push the resulting graph (nodes and relationships) into a Neo4j database.**
+5.**Push the resulting graph (nodes and relationships) into a Neo4j database.**
 
 Prerequisites
 Python 3.7+ (or a recent version).
