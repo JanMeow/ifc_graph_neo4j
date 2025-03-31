@@ -1,4 +1,4 @@
-# IFC to Graph + Neo4j Integration 😀😀
+# 😺IFC to Graph + Neo4j Integration😺 
 This script demonstrates how to:
 
 1.**Load an IFC model** using ifcopenshell. 
@@ -44,6 +44,8 @@ Bearbeiten
 ### var.py
 user_name = "neo4j"
 password = "yourpassword"
+
+😼😼😼
 How It Works
 Open an IFC file:
 The script loads test1.ifc (default path: data/ifc/test1.ifc) with:
