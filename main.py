@@ -25,7 +25,6 @@ def main():
             node.near = [graph.node_dict[guid] for guid in graph.bvh_query(node.geom_info["bbox"])
                          if guid != node.guid]
             
-    print(vars(graph.node_dict["2FQHPJ30nEVPcqIUba8A5n"]))
     
     # Push the graph to Neo4j
     # ====================================================================
