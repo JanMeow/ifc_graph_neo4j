@@ -1,7 +1,7 @@
-# IFC to Graph + Neo4j Integration
+# IFC to Graph + Neo4j Integration 😀😀
 This script demonstrates how to:
 
-1.**Load an IFC model** using ifcopenshell.
+1.**Load an IFC model** using ifcopenshell. 
 
 2.**Build a graph of IFC elements** and their bounding volumes.
 
@@ -11,6 +11,7 @@ This script demonstrates how to:
 
 5.**Push the resulting graph (nodes and relationships) into a Neo4j database.**
 
+😵‍💫
 Prerequisites
 Python 3.7+ (or a recent version).
 
